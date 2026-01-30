@@ -32,12 +32,12 @@ const OFFICE_DATA = [
   { id: 'F2_Neg_01', input: 'apiofficeyanawa', expected: 'අපිඔෆ්ෆිcඑයනවා' },
   { id: 'F2_Neg_02', input: 'ganana keeyadha????', expected: 'ගණන කීයද????' },
   { id: 'F2_Neg_03', input: 'mge nama kamal', expected: 'ම්ගේ නම කමල්' },
-  { id: 'F2_Neg_04', input: 'ApI KaMu', expected: 'අපි කමු' },
+  { id: 'F2_Neg_04', input: 'site eka https://www.facebook.com', expected: 'site එක https://www.facebook.com' },
   { id: 'F2_Neg_05', input: 'mama email eka check kara.', expected: 'මම email එක check කරා.' },
   { id: 'F2_Neg_06', input: 'sir enawa api yamu', expected: 'sir එනවා අපි යමු' },
   { id: 'F2_Neg_07', input: '     api     yamu     ', expected: '     අපි     යමු     ' },
   { id: 'F2_Neg_08', input: 'mata100k dhenna.', expected: 'මට100ක් දෙන්න.' },
-  { id: 'F2_Neg_09', input: 'site eka https://www.facebook.com', expected: 'site එක https://www.facebook.com' },
+  { id: 'F2_Neg_09', input: 'ApI KaMu', expected: 'අපි කමු'},
   { id: 'F2_Neg_10', input: '', expected: '' },
 
   //UI SCENARIO
