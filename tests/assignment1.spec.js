@@ -1,89 +1,80 @@
 const { test, expect } = require('@playwright/test');
 
-// Data Set: 35 Unique Scenarios (Professional + Mixed Context)
-const scenarioList = [
+// Data Set
+const OFFICE_DATA = [
+  //POSITIVE SCENARIOS
+  { id: 'F2_Pos_01', input: 'mahaththaya aavadha?', expected: 'මහත්තයා ආවද?' },
+  { id: 'F2_Pos_02', input: 'oba thumaata sthuthiyi.', expected: 'ඔබ තුමාට ස්තුතියි.' },
+  { id: 'F2_Pos_03', input: 'karunaakara idaganda.', expected: 'කරුණාකර ඉඩගන්න.' },
+  { id: 'F2_Pos_04', input: 'Excel sheet eka ewanna.', expected: 'Excel sheet එක එවන්න.' },
+  { id: 'F2_Pos_05', input: 'api March 31 venidha mudhal gewamu.', expected: 'අපි March 31 වෙනිදා මුදල් ගෙවමු.' },
+  { id: 'F2_Pos_06', input: 'boss innavanam mama katha karannam.', expected: 'boss ඉන්නවනම් මම කතා කරන්නම්.' },
+  { id: 'F2_Pos_07', input: 'apita salli na.', expected: 'අපිට සල්ලි නෑ.' },
+  { id: 'F2_Pos_08', input: 'shree lankaawe aarthikaya pilibadhawa sakachcha kirimata, mudhal amathithumaa saha maha bankuwe adipathithumaa athara visesha hamuwak pavathuna athara, ehi prathipala labaana sathiya thula prakasha kirimata niyamithaya.', expected: 'ශ්‍රී ලංකාවේ ආර්ථිකය පිළිබඳව සකච්ච කිරීමත, මුදල් අමතිතුමා සහ මහ බැංකුවේ අධිපතිතුමා අතර විශේෂ හමුවක් පැවතුන අතර, එහි ප්‍රතිපල ලබන සතිය තුල ප්‍රකාශ කිරීමට නියමිතය.' },
+  { id: 'F2_Pos_09', input: 'api meeting ekata giyaa.', expected: 'අපි meeting එකට ගියා.' },
+  { id: 'F2_Pos_10', input: 'puluwannam report eka hadanna.', expected: 'පුළුවන්නම් report එක හදන්න.' },
+  { id: 'F2_Pos_11', input: 'api heta office yamu.', expected: 'අපි හෙට office යමු.' },
+  { id: 'F2_Pos_12', input: 'lamayi tika sellam karanawa.', expected: 'ළමයි ටික සෙල්ලම් කරනවා.' },
+  { id: 'F2_Pos_13', input: 'sir enawa, api padam karamu.', expected: 'sir එනවා, අපි පාඩම් කරමු.' },
+  { id: 'F2_Pos_14', input: 'mokakdha \n prashne?', expected: 'මොකක්ද \n ප්‍රශ්නේ?' },
+  { id: 'F2_Pos_15', input: 'mata PDF eka mail karanna.', expected: 'මට PDF එක mail කරන්න.' },
+  { id: 'F2_Pos_16', input: 'dura 10 km k thiyenawa.', expected: 'දුර 10 km ක් තියෙනවා.' },
+  { id: 'F2_Pos_17', input: 'ganana Rs. 2500 yi.', expected: 'ගණන Rs. 2500 යි.' },
+  { id: 'F2_Pos_18', input: 'hari malli ela!', expected: 'හරි මල්ලි එල!' },
+  { id: 'F2_Pos_19', input: 'himin himin yamu.', expected: 'හිමින් හිමින් යමු.' },
+  { id: 'F2_Pos_20', input: 'Zoom link eka group ekata daanna.', expected: 'Zoom link එක group එකට දාන්න.' },
+  { id: 'F2_Pos_21', input: 'api   wada   karamu.', expected: 'අපි   වැඩ   කරමු.' },
+  { id: 'F2_Pos_22', input: 'Galle yanna kochchara wela yanawada?', expected: 'Galle යන්න කොච්චර වෙලා යනවද?' },
+  { id: 'F2_Pos_23', input: 'udhe 8.00 AM ta wada patan gannawa.', expected: 'උදේ 8.00 AM ට වැඩ පටන් ගන්නවා.' },
+  { id: 'F2_Pos_24', input: 'oba thumaa dakshayek.', expected: 'ඔබ තුමා දක්ෂයෙක්.' },
 
-  //POSITIVE FUNCTIONAL (24)
+  //NEGATIVE SCENARIOS
+  { id: 'F2_Neg_01', input: 'apiofficeyanawa', expected: 'අපිඔෆ්ෆිcඑයනවා' },
+  { id: 'F2_Neg_02', input: 'ganana keeyadha????', expected: 'ගණන කීයද????' },
+  { id: 'F2_Neg_03', input: 'mge nama kamal', expected: 'ම්ගේ නම කමල්' },
+  { id: 'F2_Neg_04', input: 'ApI KaMu', expected: 'අපි කමු' },
+  { id: 'F2_Neg_05', input: 'mama email eka check kara.', expected: 'මම email එක check කරා.' },
+  { id: 'F2_Neg_06', input: 'sir enawa api yamu', expected: 'sir එනවා අපි යමු' },
+  { id: 'F2_Neg_07', input: '     api     yamu     ', expected: '     අපි     යමු     ' },
+  { id: 'F2_Neg_08', input: 'mata100k dhenna.', expected: 'මට100ක් දෙන්න.' },
+  { id: 'F2_Neg_09', input: 'site eka https://www.facebook.com', expected: 'site එක https://www.facebook.com' },
+  { id: 'F2_Neg_10', input: '', expected: '' },
 
-  { code: 'F3_Pos_01', in: 'sir kawdhadha enne?', out: 'සර් කවුදද එන්නේ?' },
-  { code: 'F3_Pos_02', in: 'karunakara podi kalayak denna.', out: 'කරුණාකර පොඩි කාලයක් දෙන්න.' },
-  { code: 'F3_Pos_03', in: 'oyaata loku sthuthi.', out: 'ඔයාට ලොකු ස්තුති.' },
-  { code: 'F3_Pos_04', in: 'api adha project eka avasan karamu.', out: 'අපි අද project එක අවසන් කරමු.' },
-  { code: 'F3_Pos_05', in: 'manager office ekee innawa.', out: 'manager office එකේ ඉන්නවා.' },
-  { code: 'F3_Pos_06', in: 'monthly report eka ready.', out: 'monthly report එක ready.' },
-  { code: 'F3_Pos_07', in: 'api heta training ekata yanawa.', out: 'අපි හෙට training එකට යනවා.' },
-  { code: 'F3_Pos_08', in: 'customer kenek phone kara.', out: 'customer කෙනෙක් phone කරා.' },
-  { code: 'F3_Pos_09', in: 'oyaata meeka therenawadha?', out: 'ඔයාට මේක තේරෙනවද?' },
-  { code: 'F3_Pos_10', in: 'mata break ekak onee.', out: 'මට break එකක් ඕනේ.' },
-
-  { code: 'F3_Pos_11', in: 'email eka hariyata yawala.', out: 'email එක හරිට යවලා.' },
-  { code: 'F3_Pos_12', in: 'api meeting eka postpone karamu.', out: 'අපි meeting එක postpone කරමු.' },
-  { code: 'F3_Pos_13', in: 'oya innawanam mama ennam.', out: 'ඔයා ඉන්නවනම් මම එන්නම්.' },
-  { code: 'F3_Pos_14', in: 'mokakdha oyage adahas?', out: 'මොකක්ද ඔයාගේ අදහස?' },
-  { code: 'F3_Pos_15', in: 'workload eka podi venawa.', out: 'workload එක පොඩි වෙනවා.' },
-
-  { code: 'F3_Pos_16', in: 'api wada karanne team ekak widihata.', out: 'අපි වැඩ කරන්නේ team එකක් විදිහට.' },
-  { code: 'F3_Pos_17', in: 'oyaata puluwanda eka karanna?', out: 'ඔයාට පුළුවන්ද එක කරන්න?' },
-  { code: 'F3_Pos_18', in: 'udhe 9.30 AM ta meeting eka.', out: 'උදේ 9.30 AM ට meeting එක.' },
-  { code: 'F3_Pos_19', in: 'salary eka heta labenawa.', out: 'salary එක හෙට ලැබෙනවා.' },
-  { code: 'F3_Pos_20', in: 'company eke rules follow karanna.', out: 'company එකේ rules follow කරන්න.' },
-
-  { code: 'F3_Pos_21', in: 'oya hari lassanata wada karanawa.', out: 'ඔයා හරි ලස්සනට වැඩ කරනවා.' },
-  { code: 'F3_Pos_22', in: 'api   wada   avasan   karamu.', out: 'අපි   වැඩ   අවසන්   කරමු.' },
-  { code: 'F3_Pos_23', in: 'Kandy yanney kochchara wela gannawadha?', out: 'Kandy යන්නේ කොච්චර වෙලා ගන්නවද?' },
-  { code: 'F3_Pos_24', in: 'document tika upload karanna.', out: 'document ටික upload කරන්න.' },
-
-  //NEGATIVE FUNCTIONAL (9)
-
-  { code: 'F3_Neg_01', in: 'apiwadaavashyai', out: 'අපිවඩඅවශ්‍යයි' },
-  { code: 'F3_Neg_02', in: 'mokakda meeka!!!???', out: 'මොකක්ද මේක!!!???' },
-  { code: 'F3_Neg_03', in: 'mta wada hari amarui', out: 'ම්ට වැඩ හරි අමාරුයි' },
-  { code: 'F3_Neg_04', in: 'ApI wAdA KaRaMu', out: 'අපි වැඩ කරමු' },
-  { code: 'F3_Neg_05', in: 'mama report eka submit kala.', out: 'මම report එක submit කළා.' },
-  { code: 'F3_Neg_06', in: 'sir enne api balamu', out: 'sir එන්නේ අපි බලමු' },
-  { code: 'F3_Neg_07', in: '    wada    karamu    ', out: '    වැඩ    කරමු    ' },
-  { code: 'F3_Neg_08', in: 'Rs5000k gewanna.', out: 'Rs5000ක් ගෙවන්න.' },
-  { code: 'F3_Neg_09', in: 'portal eka https://portal.company.lk', out: 'portal එක https://portal.company.lk' },
-
-  
-  //UI TESTS (2)
-
-  { code: 'F3_UI_01', in: 'api wada', out: 'අපි වැඩ' },
-  { code: 'F3_UI_02', in: '' , out: '' }
+  //UI SCENARIO
+  { id: 'F2_UI_01', input: 'api wada', expected: 'අපි වැඩ' }
 ];
 
-test.describe('Friend 3 – Professional & Mixed Context Suite', () => {
+test.describe('Friend 2 Test Suite', () => {
+  test.setTimeout(180000); 
 
-  test.setTimeout(180000);
+  test('Formal Context Tests', async ({ page }) => {
+    await page.goto('https://www.swifttranslator.com/');
+    const inputField = page.getByPlaceholder('Input Your Singlish Text Here.');
+    const outputField = page.locator('div.whitespace-pre-wrap').first();
 
-  test('Translator Validation', async ({ page }) => {
-
-    await page.goto('https://www.swifttranslator.com/', { waitUntil: 'load' });
-
-    const textArea = page.getByPlaceholder('Input Your Singlish Text Here.');
-    const resultDiv = page.locator('div.whitespace-pre-wrap').first();
-
-    for (const item of scenarioList) {
-
-      console.log(`\n▶ Running: ${item.code}`);
-
+    for (const item of OFFICE_DATA) {
+      // Replaced backticks with normal strings to prevent SyntaxError
+      console.log('\nRunning: ' + item.id);
+      
       await page.keyboard.press('Escape');
-      await textArea.fill('');
-
-      if (item.in !== '') {
-        await textArea.fill(item.in);
+      await inputField.fill('');
+      
+      if (item.input) {
+        await inputField.fill(item.input);
       } else {
-        await textArea.press('Backspace');
+        await inputField.press('Backspace');
       }
 
-      await page.waitForTimeout(2500);
+      await page.waitForTimeout(3000);
+      const outputText = await outputField.innerText();
+      
+      if (outputText.trim() === item.expected.trim()) {
+        console.log('[PASS] ' + item.input + ' -> ' + outputText);
+      } else {
+        console.log('[FAIL] Expected: ' + item.expected + ' | Got: ' + outputText);
+      }
 
-      const outputText = await resultDiv.innerText();
-
-      console.log(`Input : ${item.in}`);
-      console.log(`Output: ${outputText}`);
-
-      expect.soft(outputText.trim()).toBe(item.out.trim());
+      expect.soft(outputText.trim()).toBe(item.expected.trim());
     }
   });
 });
